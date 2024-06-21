@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v4.1.7
 
       - name: Build zip file
-        run: zip -r release.zip .
+        run: zip -r release.zip . -x ".*" "*/.*"
 
       - name: Upload to Chrome Web Store
         uses: mobilefirstllc/cws-publish@2.1.1
