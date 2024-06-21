@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html ng-app="gradeApp">
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>McKinnon Learning Task Calculator</title>
+    <script src="angular.min.js"></script>
+    <script src="main.js"></script>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Open Sans", sans-serif;
+            font-size: 13px;
+        }
+
+        input:focus {
+            outline: none;
+        }
+
+        .clear {
+            clear: both;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        #body {
+            margin: 15px;
+            width: 350px;
+            height: 275px;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-family: "Lora", sans-serif;
+        }
+
+        #input,
+        #output {
+            clear: left;
+        }
+
+        #input {
+            margin-bottom: 28px;
+        }
+
+        #input .item {
+            clear: left;
+        }
+
+        #input .item .left {
+            float: left;
+            width: 150px;
+            padding-top: 23px;
+        }
+
+        #input .item .right {
+            float: left;
+            width: 200px;
+        }
+
+        #input .item .right input {
+            font-family: "Open Sans", sans-serif;
+            font-size: 20px;
+            padding: 16px;
+            -webkit-box-shadow: inset 0px 0px 5px 0px rgba(222, 222, 222, 1);
+            -moz-box-shadow: inset 0px 0px 5px 0px rgba(222, 222, 222, 1);
+            box-shadow: inset 0px 0px 5px 0px rgba(222, 222, 222, 1);
+            margin-bottom: 10px;
+            text-align: center;
+            width: 168px;
+            border-radius: 3px;
+            border: 0;
+        }
+
+        #output .item {
+            clear: left;
+            height: 28px;
+        }
+
+        #output .item .left {
+            float: left;
+            width: 150px;
+        }
+
+        #output .item .right {
+            float: left;
+            width: 200px;
+            font-weight: bold;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="body" ng-controller="MainCtrl">
+        <h1 class="center">Learning Task Calculator</h1>
+        <div id="input">
+            <div class="item">
+                <div class="left">Score</div>
+                <div class="right">
+                    <input type="number" ng-model="score" placeholder="0" ng-change="recalc()" />
+                </div>
+            </div>
+            <div class="item">
+                <div class="left">Out of</div>
+                <div class="right">
+                    <input type="number" ng-model="total" placeholder="0" ng-change="recalc()" />
+                </div>
+            </div>
+            <div class="clear"></div>
+        </div>
+        <div id="output">
+            <div class="item">
+                <div class="left">Descriptor</div>
+                <div class="right">{{ result.grade || '-' }}</div>
+            </div>
+            <div class="item">
+                <div class="left">Percentage</div>
+                <div class="right">{{ result.percentage || '-' }}%</div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,13 @@
+{
+    "manifest_version": 3,
+    "name": "Learning Task Calculator",
+    "description": "Quickly calculate grades from learning tasks.",
+    "version": "1.0",
+    "icons": {
+        "48": "images/icon-48.png",
+        "128": "images/icon-128.png"
+    },
+    "action": {
+        "default_popup": "popup.html"
+    }
+}
