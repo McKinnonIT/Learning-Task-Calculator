@@ -1,0 +1,9 @@
+- name: Upload to Chrome Web Store
+  uses: MobileFirstLLC/cws-publish@2.1.1
+  with:
+    action: 'upload'
+    client_id: ${{ secrets.CLIENT }}
+    client_secret: ${{ secrets.SECRET }}
+    refresh_token: ${{ secrets.TOKEN }}
+    extension_id: '32-CHAR EXTENSION ID' 
+    zip_file: 'ZIP FILE PATH'
