@@ -3,20 +3,93 @@
 
 <head lang="en">
     <meta charset="UTF-8">
-    <title>McKinnon Learning Task Calculator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learning Task Calculator</title>
     <script src="angular.min.js"></script>
     <script src="main.js"></script>
-    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700' rel='stylesheet' type='text/css'>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap"
-        rel="stylesheet">
+    <link href='https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap' rel='stylesheet'>
     <style>
+        :root {
+            --background: 0 0% 100%;
+            --foreground: 222.2 84% 4.9%;
+            --card: 0 0% 100%;
+            --card-foreground: 222.2 84% 4.9%;
+            --popover: 0 0% 100%;
+            --popover-foreground: 222.2 84% 4.9%;
+            --primary: 222.2 47.4% 11.2%;
+            --primary-foreground: 210 40% 98%;
+            --secondary: 210 40% 96.1%;
+            --secondary-foreground: 222.2 47.4% 11.2%;
+            --muted: 210 40% 96.1%;
+            --muted-foreground: 215.4 16.3% 46.9%;
+            --accent: 210 40% 96.1%;
+            --accent-foreground: 222.2 47.4% 11.2%;
+            --destructive: 0 84.2% 60.2%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 214.3 31.8% 91.4%;
+            --input: 214.3 31.8% 91.4%;
+            --ring: 222.2 84% 4.9%;
+            --radius: 0.5rem;
+
+            /* Adjusted colors for light theme */
+            --mint: hsl(152, 75%, 40%);
+            --teal: hsl(173, 80%, 34%);
+            --sky-blue: hsl(190, 76%, 40%);
+            --blue: hsl(210, 79%, 40%);
+            --periwinkle: hsl(230, 70%, 45%);
+            --lavender: hsl(250, 65%, 45%);
+            --lilac: hsl(280, 60%, 45%);
+            --pink: hsl(300, 70%, 45%);
+            --gray: hsl(220, 15%, 40%);
+        }
+
+        .dark {
+            --background: 222.2 84% 4.9%;
+            --foreground: 210 40% 98%;
+            --card: 222.2 84% 4.9%;
+            --card-foreground: 210 40% 98%;
+            --popover: 222.2 84% 4.9%;
+            --popover-foreground: 210 40% 98%;
+            --primary: 210 40% 98%;
+            --primary-foreground: 222.2 47.4% 11.2%;
+            --secondary: 217.2 32.6% 17.5%;
+            --secondary-foreground: 210 40% 98%;
+            --muted: 217.2 32.6% 17.5%;
+            --muted-foreground: 215 20.2% 65.1%;
+            --accent: 217.2 32.6% 17.5%;
+            --accent-foreground: 210 40% 98%;
+            --destructive: 0 62.8% 30.6%;
+            --destructive-foreground: 210 40% 98%;
+            --border: 217.2 32.6% 17.5%;
+            --input: 217.2 32.6% 17.5%;
+            --ring: 212.7 26.8% 83.9%;
+
+            /* Pastel colors for dark theme */
+            --mint: hsl(152, 75%, 80%);
+            --teal: hsl(173, 80%, 74%);
+            --sky-blue: hsl(190, 76%, 80%);
+            --blue: hsl(210, 79%, 80%);
+            --periwinkle: hsl(230, 70%, 85%);
+            --lavender: hsl(250, 65%, 85%);
+            --lilac: hsl(280, 60%, 85%);
+            --pink: hsl(300, 70%, 85%);
+            --gray: hsl(220, 15%, 80%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
             margin: 0;
             padding: 0;
-            font-family: "Open Sans", sans-serif;
-            font-size: 13px;
+            font-family: "Inter", sans-serif;
+            font-size: 14px;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         input:focus {
@@ -32,99 +105,520 @@
         }
 
         #body {
-            margin: 15px;
+            margin: 16px;
             width: 350px;
-            height: 275px;
+            height: auto;
+            min-height: 300px;
+            padding: 24px;
+            border-radius: var(--radius);
+            background-color: hsl(var(--card));
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            transition: background-color 0.3s ease;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
         }
 
         h1 {
-            font-size: 16px;
-            font-family: "Lora", sans-serif;
+            font-size: 18px;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin: 0;
+        }
+
+        .icon-button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: hsl(var(--foreground));
+            background-color: hsl(var(--muted));
+            transition: background-color 0.2s;
+        }
+
+        .icon-button:hover {
+            background-color: hsl(var(--accent));
+        }
+
+        .icon {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
         }
 
         #input,
         #output {
-            clear: left;
+            clear: both;
         }
 
         #input {
             margin-bottom: 28px;
         }
 
-        #input .item {
-            clear: left;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 16px;
         }
 
-        #input .item .left {
-            float: left;
-            width: 150px;
-            padding-top: 23px;
+        @media (min-width: 400px) {
+            .form-group {
+                flex-direction: row;
+                align-items: center;
+            }
         }
 
-        #input .item .right {
-            float: left;
-            width: 200px;
+        .form-label {
+            width: 100px;
+            padding-bottom: 8px;
+            font-weight: 500;
+            color: hsl(var(--muted-foreground));
         }
 
-        #input .item .right input {
-            font-family: "Open Sans", sans-serif;
-            font-size: 20px;
-            padding: 16px;
-            -webkit-box-shadow: inset 0px 0px 5px 0px rgba(222, 222, 222, 1);
-            -moz-box-shadow: inset 0px 0px 5px 0px rgba(222, 222, 222, 1);
-            box-shadow: inset 0px 0px 5px 0px rgba(222, 222, 222, 1);
-            margin-bottom: 10px;
+        @media (min-width: 400px) {
+            .form-label {
+                padding-bottom: 0;
+                padding-top: 10px;
+            }
+        }
+
+        .form-input {
+            flex: 1;
+        }
+
+        .form-input input {
+            font-family: "Inter", sans-serif;
+            font-size: 16px;
+            padding: 10px 14px;
+            background-color: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            width: 100%;
+            color: hsl(var(--foreground));
+            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
+        }
+
+        .form-input input:focus {
+            border-color: hsl(var(--ring));
+            box-shadow: 0 0 0 2px hsla(var(--ring), 0.2);
+        }
+
+        /* Slider styles */
+        .slider-container {
+            margin: 20px 0;
+        }
+
+        .slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 4px;
+            background: hsl(var(--muted));
+            outline: none;
+            transition: background 0.3s;
+        }
+
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: hsl(var(--primary));
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        .slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: hsl(var(--primary));
+            cursor: pointer;
+            transition: background 0.3s, transform 0.1s;
+            border: none;
+        }
+
+        .slider::-webkit-slider-thumb:hover,
+        .slider::-moz-range-thumb:hover {
+            transform: scale(1.1);
+        }
+
+        .slider-value {
             text-align: center;
-            width: 168px;
-            border-radius: 3px;
-            border: 0;
+            font-weight: 600;
+            margin-top: 8px;
+            color: hsl(var(--foreground));
         }
 
-        #output .item {
-            clear: left;
+        #output {
+            background-color: hsl(var(--muted));
+            padding: 16px;
+            border-radius: var(--radius);
+            margin-top: 16px;
+            transition: background-color 0.3s, opacity 0.3s;
+            opacity: 1;
+        }
+
+        #output.hidden {
+            opacity: 0.7;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            align-items: center;
             height: 28px;
         }
 
-        #output .item .left {
-            float: left;
-            width: 150px;
+        .result-label {
+            color: hsl(var(--muted-foreground));
+            font-weight: 500;
         }
 
-        #output .item .right {
-            float: left;
-            width: 200px;
-            font-weight: bold;
-            text-align: center;
+        .result-value {
+            font-weight: 600;
+            text-align: right;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .result-value.animate {
+            transform: scale(1.1);
+        }
+
+        /* Legend styles */
+        .legend {
+            margin-top: 20px;
+            background-color: hsl(var(--background));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 16px;
+            transition: all 0.3s ease;
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        .legend.visible {
+            max-height: 500px;
+            opacity: 1;
+            margin-bottom: 16px;
+        }
+
+        .legend-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: hsl(var(--foreground));
+        }
+
+        .legend-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid hsl(var(--border));
+        }
+
+        .legend-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .legend-grade {
+            font-weight: 500;
+        }
+
+        .legend-range {
+            color: hsl(var(--muted-foreground));
+            font-size: 13px;
+        }
+
+        /* Result value container for positioning the copy button */
+        .result-value-container {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* Copy container for positioning the notification */
+        .copy-container {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        /* Copy button styles */
+        .copy-button {
+            width: 24px;
+            height: 24px;
+            opacity: 0.5;
+            transition: opacity 0.2s, background-color 0.2s, transform 0.2s;
+        }
+
+        .copy-button:hover {
+            opacity: 1;
+            background-color: hsl(var(--accent));
+        }
+
+        .copy-button:active {
+            transform: scale(0.95);
+        }
+
+        .copy-button.copied {
+            opacity: 1;
+            color: hsl(var(--primary));
+            background-color: hsl(var(--accent));
+        }
+
+        /* Smaller icon for copy button */
+        .copy-button .icon {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Copied notification */
+        .copied-notification {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background-color: hsl(var(--accent));
+            color: hsl(var(--accent-foreground));
+            font-size: 12px;
+            font-weight: 500;
+            padding: 4px 8px;
+            border-radius: var(--radius);
+            opacity: 0;
+            transform: translateY(5px);
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            white-space: nowrap;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .copied-notification.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Add a small triangle/arrow to the notification */
+        .copied-notification:after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            right: 8px;
+            width: 0;
+            height: 0;
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 5px solid hsl(var(--accent));
+        }
+
+        /* Animation for copy feedback */
+        @keyframes popIn {
+            0% {
+                transform: scale(0.8);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
+
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        .copy-button.copied .icon {
+            animation: popIn 0.3s ease-out;
+        }
+
+        /* Color classes for legend items */
+        .color-mint {
+            color: var(--mint);
+        }
+
+        .color-teal {
+            color: var(--teal);
+        }
+
+        .color-sky-blue {
+            color: var(--sky-blue);
+        }
+
+        .color-blue {
+            color: var(--blue);
+        }
+
+        .color-periwinkle {
+            color: var(--periwinkle);
+        }
+
+        .color-lavender {
+            color: var(--lavender);
+        }
+
+        .color-lilac {
+            color: var(--lilac);
+        }
+
+        .color-pink {
+            color: var(--pink);
+        }
+
+        .color-gray {
+            color: var(--gray);
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        #output {
+            animation: fadeIn 0.3s ease-out;
         }
     </style>
 </head>
 
-<body>
+<body ng-class="{'dark': isDarkMode}">
     <div id="body" ng-controller="MainCtrl">
-        <h1 class="center">Learning Task Calculator</h1>
-        <div id="input">
-            <div class="item">
-                <div class="left">Score</div>
-                <div class="right">
-                    <input type="number" ng-model="score" placeholder="0" ng-change="recalc()" />
-                </div>
+        <div class="header">
+            <h1>Learning Task Calculator</h1>
+            <div class="header-actions">
+                <!-- Legend toggle button -->
+                <button class="icon-button" ng-click="toggleLegend()" aria-label="Toggle legend">
+                    <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="8" y1="6" x2="21" y2="6"></line>
+                        <line x1="8" y1="12" x2="21" y2="12"></line>
+                        <line x1="8" y1="18" x2="21" y2="18"></line>
+                        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+                    </svg>
+                </button>
+
+                <!-- Theme toggle button -->
+                <button class="icon-button" ng-click="toggleTheme()" aria-label="Toggle theme">
+                    <!-- Sun icon for dark mode -->
+                    <svg ng-if="isDarkMode" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <!-- Moon icon for light mode -->
+                    <svg ng-if="!isDarkMode" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
             </div>
-            <div class="item">
-                <div class="left">Out of</div>
-                <div class="right">
-                    <input type="number" ng-model="total" placeholder="0" ng-change="recalc()" />
-                </div>
-            </div>
-            <div class="clear"></div>
         </div>
-        <div id="output">
-            <div class="item">
-                <div class="left">Descriptor</div>
-                <div class="right">{{ result.grade || '-' }}</div>
+
+        <!-- Legend section -->
+        <div class="legend" ng-class="{'visible': showLegend}">
+            <div class="legend-title">Grade Descriptors</div>
+            <div class="legend-item" ng-repeat="grade in grades">
+                <span class="legend-grade" ng-class="getColorClass($index)">{{grade.grade}}</span>
+                <span class="legend-range">{{grade.min}}-{{grade.max}}%</span>
             </div>
-            <div class="item">
-                <div class="left">Percentage</div>
-                <div class="right">{{ result.percentage || '-' }}%</div>
+        </div>
+
+        <div id="input">
+            <div class="form-group">
+                <div class="form-label">Score</div>
+                <div class="form-input">
+                    <input type="number" ng-model="score" placeholder="0" ng-change="recalc()" min="0"
+                        max="{{total}}" />
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-label">Out of</div>
+                <div class="form-input">
+                    <input type="number" ng-model="total" placeholder="100" ng-change="recalc()" min="1" />
+                </div>
+            </div>
+
+            <!-- Slider for score input -->
+            <div class="slider-container">
+                <input type="range" min="0" max="{{total}}" ng-model="score" class="slider" ng-change="sliderChanged()"
+                    ng-mouseup="sliderReleased()" ng-touchend="sliderReleased()">
+                <div class="slider-value">{{score || 0}} / {{total || 100}}</div>
+            </div>
+        </div>
+
+        <div id="output" ng-class="{'hidden': !showResults}">
+            <div class="result-item">
+                <div class="result-label">Descriptor</div>
+                <div class="result-value-container">
+                    <div class="result-value" ng-class="{'animate': result.animateChange}"
+                        ng-style="{'color': result.color}">
+                        {{ result.grade || '-' }}
+                    </div>
+                    <div class="copy-container">
+                        <button class="icon-button copy-button" ng-click="copyToClipboard()"
+                            ng-class="{'copied': showCopyFeedback}" aria-label="Copy descriptor to clipboard"
+                            ng-if="result.grade">
+                            <!-- Copy icon -->
+                            <svg ng-if="!showCopyFeedback" class="icon" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                            </svg>
+                            <!-- Check icon for feedback -->
+                            <svg ng-if="showCopyFeedback" class="icon" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round">
+                                <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                        </button>
+                        <!-- Copied text notification -->
+                        <div class="copied-notification" ng-class="{'visible': showCopyFeedback}">
+                            Copied!
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="result-item">
+                <div class="result-label">Percentage</div>
+                <div class="result-value" ng-class="{'animate': result.animateChange}"
+                    ng-style="{'color': result.color}">
+                    {{ result.percentage || '-' }}%
+                </div>
             </div>
         </div>
     </div>
