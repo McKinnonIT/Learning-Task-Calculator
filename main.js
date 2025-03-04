@@ -1,13 +1,13 @@
 const GRADES = [
-    { min: 90, max: 100, grade: "Outstanding", color: "hsl(152, 75%, 80%)" }, // Pastel mint
-    { min: 80, max: 89, grade: "Excellent", color: "hsl(173, 80%, 74%)" },    // Pastel teal
-    { min: 70, max: 79, grade: "Very Good", color: "hsl(190, 76%, 80%)" },    // Pastel sky blue
-    { min: 60, max: 69, grade: "Good", color: "hsl(210, 79%, 80%)" },         // Pastel blue
-    { min: 50, max: 59, grade: "Moderate", color: "hsl(230, 70%, 85%)" },     // Pastel periwinkle
-    { min: 40, max: 49, grade: "Limited", color: "hsl(250, 65%, 85%)" },      // Pastel lavender
-    { min: 20, max: 39, grade: "Low", color: "hsl(280, 60%, 85%)" },          // Pastel lilac
-    { min: 1, max: 19, grade: "Very Low", color: "hsl(300, 70%, 85%)" },      // Pastel pink
-    { min: 0, max: 0, grade: "Ungraded", color: "hsl(220, 15%, 80%)" }        // Pastel gray
+    { min: 90, max: 100, grade: "Outstanding", color: "var(--mint)" },
+    { min: 80, max: 89, grade: "Excellent", color: "var(--teal)" },
+    { min: 70, max: 79, grade: "Very Good", color: "var(--sky-blue)" },
+    { min: 60, max: 69, grade: "Good", color: "var(--blue)" },
+    { min: 50, max: 59, grade: "Moderate", color: "var(--periwinkle)" },
+    { min: 40, max: 49, grade: "Limited", color: "var(--lavender)" },
+    { min: 20, max: 39, grade: "Low", color: "var(--lilac)" },
+    { min: 1, max: 19, grade: "Very Low", color: "var(--pink)" },
+    { min: 0, max: 0, grade: "Ungraded", color: "var(--gray)" }
 ];
 
 angular.module('gradeApp', []).directive('sliderInput', function () {
@@ -15,10 +15,17 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
         restrict: 'A',
         require: 'ngModel',
         link: function (scope, element, attr, ngModel) {
+            // Listen for input event (fires continuously while sliding)
             element.on('input', function () {
                 scope.$apply(function () {
-                    ngModel.$setViewValue(element.val());
-                    // Call the slider input function
+                    // Round to integer for slider
+                    const intValue = Math.round(parseFloat(element.val()));
+                    ngModel.$setViewValue(intValue);
+
+                    // Update the score in real-time
+                    scope.score = intValue;
+
+                    // Call the slider input function to recalculate
                     scope.sliderInput();
                 });
             });
@@ -27,8 +34,11 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
 }).controller('MainCtrl', [
     '$scope', '$timeout',
     function ($scope, $timeout) {
-        // Initialize theme based on user preference
-        $scope.isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        // Initialize theme based on user preference or saved preference
+        const savedDarkMode = localStorage.getItem('darkMode');
+        $scope.isDarkMode = savedDarkMode !== null
+            ? savedDarkMode === 'true'
+            : window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         // Default total value
         const DEFAULT_TOTAL = 100;
@@ -38,6 +48,11 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
 
         // Make grades available to the view for legend
         $scope.grades = GRADES;
+
+        // Animation states
+        $scope.animatePercentage = false;
+        $scope.animateGrade = false;
+        $scope.showCopyFeedback = false;
 
         // Apply theme on load
         applyTheme($scope.isDarkMode);
@@ -49,12 +64,13 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
             localStorage.setItem('darkMode', $scope.isDarkMode);
         };
 
-        // Toggle legend visibility
+        // Legend toggle function
         $scope.toggleLegend = function () {
             $scope.showLegend = !$scope.showLegend;
             localStorage.setItem('showLegend', $scope.showLegend);
         };
 
+        // Apply theme to document
         function applyTheme(isDark) {
             if (isDark) {
                 document.body.classList.add('dark');
@@ -63,182 +79,195 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
             }
         }
 
+        // Reset function
         function reset() {
-            $scope.result = {
-                percentage: null,
-                color: null,
-                animateChange: false
-            };
-            $scope.showResults = false;
+            $scope.score = '';
+            $scope.total = DEFAULT_TOTAL;
+            $scope.percentage = 0;
+            $scope.grade = '';
+            $scope.gradeIndex = -1;
         }
 
+        // Initialize
         reset();
-
-        function loadSavedData() {
-            // Load theme preference
-            const savedTheme = localStorage.getItem('darkMode');
-            if (savedTheme !== null) {
-                $scope.isDarkMode = savedTheme === 'true';
-                applyTheme($scope.isDarkMode);
-            }
-
-            // Load legend preference
-            const savedLegendState = localStorage.getItem('showLegend');
-            if (savedLegendState !== null) {
-                $scope.showLegend = savedLegendState === 'true';
-            }
-
-            // Load saved values
-            const total = localStorage.getItem("total");
-            if (total) {
-                $scope.total = parseInt(total);
-            } else {
-                // Set default total if not saved
-                $scope.total = DEFAULT_TOTAL;
-                localStorage.setItem("total", DEFAULT_TOTAL);
-            }
-
-            const score = localStorage.getItem("score");
-            if (score) {
-                $scope.score = parseInt(score);
-                // Calculate initial result if both values exist
-                if ($scope.total) {
-                    $scope.recalc(false);
-                }
-            }
-        }
-
         loadSavedData();
 
-        $scope.recalc = function (animate = true) {
-            // Keep previous results visible
-            const previousResults = $scope.result;
+        // Load saved data from localStorage
+        function loadSavedData() {
+            try {
+                const savedData = JSON.parse(localStorage.getItem('calculatorData'));
+                if (savedData) {
+                    $scope.score = savedData.score || '';
+                    $scope.total = savedData.total || DEFAULT_TOTAL;
 
-            reset();
+                    // Recalculate with loaded data
+                    if ($scope.score && $scope.total) {
+                        recalculate();
+                    }
+                }
 
-            // Always show results section
-            $scope.showResults = true;
+                // Load legend preference
+                const savedLegend = localStorage.getItem('showLegend');
+                if (savedLegend !== null) {
+                    $scope.showLegend = savedLegend === 'true';
+                }
+            } catch (e) {
+                console.error('Error loading saved data:', e);
+                reset();
+            }
+        }
 
-            // Validate inputs
+        // Save current data to localStorage
+        function saveData() {
+            try {
+                const dataToSave = {
+                    score: $scope.score,
+                    total: $scope.total
+                };
+                localStorage.setItem('calculatorData', JSON.stringify(dataToSave));
+            } catch (e) {
+                console.error('Error saving data:', e);
+            }
+        }
+
+        // Recalculate function
+        function recalculate() {
             if (!isValidInput($scope.score) || !isValidInput($scope.total)) {
                 return;
             }
 
-            // Ensure score doesn't exceed total
-            if ($scope.score > $scope.total) {
-                $scope.score = $scope.total;
+            const score = parseFloat($scope.score);
+            const total = parseFloat($scope.total);
+
+            if (isNaN(score) || isNaN(total) || total <= 0) {
+                return;
             }
 
             // Calculate percentage
-            const percentage = Math.ceil($scope.score / $scope.total * 100);
-            $scope.result.percentage = percentage;
+            const oldPercentage = $scope.percentage;
+            $scope.percentage = (score / total) * 100;
 
-            // Find matching grade
-            const matchedGrade = GRADES.find(el => el.min <= percentage && el.max >= percentage);
-            if (matchedGrade) {
-                $scope.result.grade = matchedGrade.grade;
-                $scope.result.color = matchedGrade.color;
+            // Find grade descriptor
+            let foundGrade = null;
+            let foundIndex = -1;
 
-                // Add animation if requested
-                if (animate) {
-                    $scope.result.animateChange = true;
-                    $timeout(function () {
-                        $scope.result.animateChange = false;
-                    }, 500);
+            for (let i = 0; i < GRADES.length; i++) {
+                const grade = GRADES[i];
+                if ($scope.percentage >= grade.min && $scope.percentage <= grade.max) {
+                    foundGrade = grade.grade;
+                    foundIndex = i;
+                    break;
                 }
             }
-        };
 
-        // Initialize sliderValue
-        $scope.sliderValue = 0;
+            const oldGrade = $scope.grade;
+            $scope.grade = foundGrade;
+            $scope.gradeIndex = foundIndex;
 
-        // Handle continuous slider input
-        $scope.sliderInput = function () {
-            // Calculate the result without animation
-            $scope.recalc(false);
-        };
-
-        // On release, add the animation
-        $scope.sliderReleased = function () {
-            $scope.recalc(true);
-        };
-
-        // Watch for changes to save to localStorage
-        $scope.$watch('total', function (newVal) {
-            if (isValidInput(newVal)) {
-                localStorage.setItem("total", parseInt(newVal));
-                // Recalculate when total changes
-                if ($scope.score !== undefined) {
-                    $scope.recalc(false);
-                }
+            // Animate changes if values have changed
+            if (oldPercentage !== $scope.percentage) {
+                $scope.animatePercentage = true;
+                $timeout(function () {
+                    $scope.animatePercentage = false;
+                }, 500);
             }
-        });
 
-        $scope.$watch('score', function (newVal) {
-            if (isValidInput(newVal)) {
-                localStorage.setItem("score", parseInt(newVal));
+            if (oldGrade !== $scope.grade) {
+                $scope.animateGrade = true;
+                $timeout(function () {
+                    $scope.animateGrade = false;
+                }, 500);
             }
-        });
 
-        function isValidInput(value) {
-            return value !== undefined &&
-                value !== null &&
-                value !== '' &&
-                !isNaN(value) &&
-                parseInt(Number(value)) == value &&
-                !isNaN(parseInt(value, 10)) &&
-                value >= 0;
+            // Update slider background
+            updateSliderBackground();
+
+            // Save data
+            saveData();
         }
 
-        // Add this to your controller's initialization
-        function setupSliderInputHandler() {
-            // Get the slider element
-            var slider = document.querySelector('input[type="range"]');
-            if (slider) {
-                // Add input event listener
-                slider.addEventListener('input', function () {
-                    $scope.$apply(function () {
-                        // Update the score model
-                        $scope.score = parseInt(slider.value);
-                        // Calculate the result without animation
-                        $scope.recalc(false);
-                    });
+        // Update the slider background to show progress
+        function updateSliderBackground() {
+            const slider = document.querySelector('.slider');
+            if (!slider) return;
+
+            const value = parseFloat($scope.score) || 0;
+            const max = parseFloat($scope.total) || 100;
+            const percentage = (value / max) * 100;
+
+            slider.style.background = `linear-gradient(to right, 
+                hsl(var(--primary)) 0%, 
+                hsl(var(--primary)) ${percentage}%, 
+                hsl(var(--muted)) ${percentage}%, 
+                hsl(var(--muted)) 100%)`;
+        }
+
+        // Validate input
+        function isValidInput(value) {
+            if (value === undefined || value === null || value === '') {
+                return false;
+            }
+            const num = parseFloat(value);
+            return !isNaN(num) && isFinite(num) && num >= 0;
+        }
+
+        // Handle slider input
+        $scope.sliderInput = function () {
+            recalculate();
+        };
+
+        // Copy to clipboard function
+        $scope.copyToClipboard = function (value, type) {
+            if (!value) return;
+
+            let textToCopy = '';
+
+            if (type === 'percentage') {
+                textToCopy = value.toFixed(2) + '%';
+            } else if (type === 'grade') {
+                textToCopy = $scope.grade;
+            }
+
+            navigator.clipboard.writeText(textToCopy).then(function () {
+                $scope.$apply(function () {
+                    $scope.showCopyFeedback = true;
+                    $timeout(function () {
+                        $scope.showCopyFeedback = false;
+                    }, 2000);
+                });
+            }).catch(function (err) {
+                console.error('Could not copy text: ', err);
+            });
+        };
+
+        // Get color class for grade index
+        $scope.getColorClass = function (index) {
+            if (index < 0) return '';
+
+            // Use the color directly from the GRADES array instead of hardcoded color classes
+            // This ensures that if GRADES colors change, the display will be consistent
+            return { 'color': GRADES[index].color };
+        };
+
+        // Expose recalculate function to the scope
+        $scope.recalc = function () {
+            recalculate();
+        };
+
+        // Listen for media query changes
+        const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+        darkModeMediaQuery.addEventListener('change', function (e) {
+            if (localStorage.getItem('darkMode') === null) {
+                $scope.$apply(function () {
+                    $scope.isDarkMode = e.matches;
+                    applyTheme($scope.isDarkMode);
                 });
             }
-        }
-
-        // Call this after the DOM is ready
-        angular.element(document).ready(function () {
-            setupSliderInputHandler();
         });
 
-        // Update the copyToClipboard function
-        $scope.copyToClipboard = function () {
-            // Get the descriptor text
-            const descriptorText = $scope.result.grade;
-
-            // Only proceed if we have a descriptor
-            if (descriptorText) {
-                // Create a temporary textarea element
-                const textarea = document.createElement('textarea');
-                textarea.value = descriptorText;
-                document.body.appendChild(textarea);
-
-                // Select and copy the text
-                textarea.select();
-                document.execCommand('copy');
-
-                // Remove the temporary element
-                document.body.removeChild(textarea);
-
-                // Show feedback
-                $scope.showCopyFeedback = true;
-
-                // Hide feedback after 2 seconds
-                $timeout(function () {
-                    $scope.showCopyFeedback = false;
-                }, 2000);
-            }
-        };
+        // Initialize slider background
+        $timeout(function () {
+            updateSliderBackground();
+        }, 0);
     }
 ]);

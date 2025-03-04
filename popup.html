@@ -29,18 +29,18 @@
             --border: 214.3 31.8% 91.4%;
             --input: 214.3 31.8% 91.4%;
             --ring: 222.2 84% 4.9%;
-            --radius: 0.5rem;
+            --radius: 0.75rem;
 
-            /* Adjusted colors for light theme */
-            --mint: hsl(152, 75%, 40%);
-            --teal: hsl(173, 80%, 34%);
-            --sky-blue: hsl(190, 76%, 40%);
-            --blue: hsl(210, 79%, 40%);
-            --periwinkle: hsl(230, 70%, 45%);
-            --lavender: hsl(250, 65%, 45%);
-            --lilac: hsl(280, 60%, 45%);
-            --pink: hsl(300, 70%, 45%);
-            --gray: hsl(220, 15%, 40%);
+            /* Adjusted colors for light theme with more vibrant tones */
+            --mint: hsl(152, 75%, 45%);
+            --teal: hsl(173, 80%, 40%);
+            --sky-blue: hsl(190, 76%, 45%);
+            --blue: hsl(210, 79%, 45%);
+            --periwinkle: hsl(230, 70%, 50%);
+            --lavender: hsl(250, 65%, 50%);
+            --lilac: hsl(280, 60%, 50%);
+            --pink: hsl(300, 70%, 50%);
+            --gray: hsl(220, 15%, 45%);
         }
 
         .dark {
@@ -64,7 +64,7 @@
             --input: 217.2 32.6% 17.5%;
             --ring: 212.7 26.8% 83.9%;
 
-            /* Pastel colors for dark theme */
+            /* Pastel colors for dark theme with improved contrast */
             --mint: hsl(152, 75%, 80%);
             --teal: hsl(173, 80%, 74%);
             --sky-blue: hsl(190, 76%, 80%);
@@ -90,10 +90,12 @@
             background-color: hsl(var(--background));
             color: hsl(var(--foreground));
             transition: background-color 0.3s ease, color 0.3s ease;
+            line-height: 1.5;
         }
 
         input:focus {
             outline: none;
+            box-shadow: 0 0 0 2px hsl(var(--ring) / 0.3);
         }
 
         .clear {
@@ -105,53 +107,109 @@
         }
 
         #body {
-            margin: 16px;
-            width: 350px;
+            margin: 0;
+            width: 380px;
             height: auto;
             min-height: 300px;
-            padding: 24px;
+            padding: 28px;
             border-radius: var(--radius);
             background-color: hsl(var(--card));
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
-            transition: background-color 0.3s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
         }
 
         .header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
+            margin-bottom: 28px;
         }
 
         .header-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
         }
 
         h1 {
-            font-size: 18px;
-            font-weight: 600;
+            font-size: 20px;
+            font-weight: 700;
             color: hsl(var(--foreground));
             margin: 0;
+            letter-spacing: -0.02em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        h1 .icon {
+            color: hsl(var(--primary));
         }
 
         .icon-button {
             background: none;
             border: none;
             cursor: pointer;
-            width: 32px;
-            height: 32px;
+            width: 36px;
+            height: 36px;
             border-radius: var(--radius);
             display: flex;
             align-items: center;
             justify-content: center;
             color: hsl(var(--foreground));
             background-color: hsl(var(--muted));
-            transition: background-color 0.2s;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .icon-button:hover {
-            background-color: hsl(var(--accent));
+            background-color: hsl(var(--muted-foreground) / 0.2);
+            transform: translateY(-1px);
+        }
+
+        .icon-button:active {
+            transform: translateY(0);
+        }
+
+        .icon-button svg {
+            width: 18px;
+            height: 18px;
+            transition: transform 0.2s ease;
+        }
+
+        .icon-button:hover svg {
+            transform: scale(1.1);
+        }
+
+        /* Ripple effect for buttons */
+        .icon-button:after {
+            content: "";
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%, -50%);
+            transform-origin: 50% 50%;
+        }
+
+        .icon-button:focus:not(:active)::after {
+            animation: ripple 0.6s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+
+            100% {
+                transform: scale(30, 30);
+                opacity: 0;
+            }
         }
 
         .icon {
@@ -172,7 +230,8 @@
         .form-group {
             display: flex;
             flex-direction: column;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            position: relative;
         }
 
         @media (min-width: 400px) {
@@ -186,7 +245,8 @@
             width: 100px;
             padding-bottom: 8px;
             font-weight: 500;
-            color: hsl(var(--muted-foreground));
+            color: hsl(var(--foreground));
+            transition: color 0.3s ease;
         }
 
         @media (min-width: 400px) {
@@ -198,28 +258,32 @@
 
         .form-input {
             flex: 1;
+            position: relative;
         }
 
         .form-input input {
             font-family: "Inter", sans-serif;
             font-size: 16px;
-            padding: 10px 14px;
+            padding: 12px 16px;
             background-color: hsl(var(--background));
             border: 1px solid hsl(var(--border));
             border-radius: var(--radius);
             width: 100%;
             color: hsl(var(--foreground));
-            transition: border-color 0.2s, box-shadow 0.2s, background-color 0.3s;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
         }
 
         .form-input input:focus {
             border-color: hsl(var(--ring));
-            box-shadow: 0 0 0 2px hsla(var(--ring), 0.2);
+            box-shadow: 0 0 0 3px hsla(var(--ring), 0.15), 0 2px 4px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
         }
 
         /* Slider styles */
         .slider-container {
-            margin: 20px 0;
+            margin: 24px 0;
+            padding: 0 4px;
         }
 
         .slider {
@@ -227,126 +291,177 @@
             width: 100%;
             height: 8px;
             border-radius: 4px;
-            background: hsl(var(--muted));
+            background: linear-gradient(to right, hsl(var(--primary) / 0.5) 0%, hsl(var(--primary) / 0.5) 50%, hsl(var(--muted)) 50%, hsl(var(--muted)) 100%);
             outline: none;
-            transition: background 0.3s;
+            transition: all 0.3s ease;
+            cursor: pointer;
         }
 
         .slider::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: hsl(var(--primary));
             cursor: pointer;
-            transition: background 0.3s, transform 0.1s;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .slider::-moz-range-thumb {
-            width: 20px;
-            height: 20px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             background: hsl(var(--primary));
             cursor: pointer;
-            transition: background 0.3s, transform 0.1s;
+            transition: all 0.2s ease;
             border: none;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
         }
 
         .slider::-webkit-slider-thumb:hover,
         .slider::-moz-range-thumb:hover {
+            transform: scale(1.15);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .slider::-webkit-slider-thumb:active,
+        .slider::-moz-range-thumb:active {
             transform: scale(1.1);
         }
 
         .slider-value {
             text-align: center;
             font-weight: 600;
-            margin-top: 8px;
+            margin-top: 12px;
             color: hsl(var(--foreground));
+            font-size: 16px;
+            transition: all 0.3s ease;
         }
 
         #output {
             background-color: hsl(var(--muted));
-            padding: 16px;
+            padding: 20px;
             border-radius: var(--radius);
-            margin-top: 16px;
-            transition: background-color 0.3s, opacity 0.3s;
+            margin-top: 20px;
+            transition: all 0.3s ease;
             opacity: 1;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border: 1px solid hsl(var(--border));
         }
 
         #output.hidden {
             opacity: 0.7;
+            transform: translateY(5px);
         }
 
         .result-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
             align-items: center;
-            height: 28px;
+            height: 32px;
+            padding: 0 4px;
+            border-radius: var(--radius);
+            transition: all 0.2s ease;
+        }
+
+        .result-item:hover {
+            background-color: hsl(var(--background) / 0.5);
+        }
+
+        .result-item:last-child {
+            margin-bottom: 0;
         }
 
         .result-label {
-            color: hsl(var(--muted-foreground));
+            color: hsl(var(--foreground));
             font-weight: 500;
+            transition: color 0.3s ease;
         }
 
         .result-value {
             font-weight: 600;
             text-align: right;
-            transition: color 0.3s, transform 0.3s;
+            transition: all 0.3s ease;
+            font-size: 16px;
         }
 
         .result-value.animate {
             transform: scale(1.1);
+            color: hsl(var(--primary));
         }
 
         /* Legend styles */
         .legend {
-            margin-top: 20px;
+            margin-top: 24px;
             background-color: hsl(var(--background));
             border: 1px solid hsl(var(--border));
             border-radius: var(--radius);
-            padding: 16px;
-            transition: all 0.3s ease;
+            padding: 0;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             max-height: 0;
             overflow: hidden;
             opacity: 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .legend.visible {
             max-height: 500px;
             opacity: 1;
-            margin-bottom: 16px;
-        }
-
-        .legend-title {
-            font-weight: 600;
-            margin-bottom: 12px;
-            color: hsl(var(--foreground));
+            margin-bottom: 20px;
+            padding: 16px;
         }
 
         .legend-item {
             display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            gap: 10px;
+            margin-bottom: 4px;
             justify-content: space-between;
-            margin-bottom: 8px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid hsl(var(--border));
         }
 
         .legend-item:last-child {
-            border-bottom: none;
             margin-bottom: 0;
-            padding-bottom: 0;
+        }
+
+        .legend-item:hover {
+            background-color: hsl(var(--accent));
+            transform: translateX(2px);
         }
 
         .legend-grade {
+            color: hsl(var(--foreground));
             font-weight: 500;
+            font-size: 14px;
+            transition: color 0.3s ease;
+            min-width: 140px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .legend-color {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
         }
 
         .legend-range {
             color: hsl(var(--muted-foreground));
             font-size: 13px;
+            transition: color 0.3s ease;
+            min-width: 70px;
+            text-align: right;
+            font-variant-numeric: tabular-nums;
         }
 
         /* Result value container for positioning the copy button */
@@ -366,15 +481,17 @@
 
         /* Copy button styles */
         .copy-button {
-            width: 24px;
-            height: 24px;
-            opacity: 0.5;
-            transition: opacity 0.2s, background-color 0.2s, transform 0.2s;
+            width: 28px;
+            height: 28px;
+            opacity: 0.6;
+            transition: all 0.2s ease;
+            border-radius: var(--radius);
         }
 
         .copy-button:hover {
             opacity: 1;
             background-color: hsl(var(--accent));
+            transform: translateY(-1px);
         }
 
         .copy-button:active {
@@ -398,92 +515,23 @@
             position: absolute;
             top: -30px;
             right: 0;
-            background-color: hsl(var(--accent));
-            color: hsl(var(--accent-foreground));
-            font-size: 12px;
-            font-weight: 500;
+            background-color: hsl(var(--primary));
+            color: hsl(var(--primary-foreground));
             padding: 4px 8px;
             border-radius: var(--radius);
+            font-size: 12px;
+            font-weight: 500;
             opacity: 0;
-            transform: translateY(5px);
+            transform: translateY(10px);
+            transition: all 0.3s ease;
             pointer-events: none;
-            transition: opacity 0.2s, transform 0.2s;
             white-space: nowrap;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
-        .copied-notification.visible {
+        .copied-notification.show {
             opacity: 1;
             transform: translateY(0);
-        }
-
-        /* Add a small triangle/arrow to the notification */
-        .copied-notification:after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            right: 8px;
-            width: 0;
-            height: 0;
-            border-left: 5px solid transparent;
-            border-right: 5px solid transparent;
-            border-top: 5px solid hsl(var(--accent));
-        }
-
-        /* Animation for copy feedback */
-        @keyframes popIn {
-            0% {
-                transform: scale(0.8);
-            }
-
-            50% {
-                transform: scale(1.1);
-            }
-
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .copy-button.copied .icon {
-            animation: popIn 0.3s ease-out;
-        }
-
-        /* Color classes for legend items */
-        .color-mint {
-            color: var(--mint);
-        }
-
-        .color-teal {
-            color: var(--teal);
-        }
-
-        .color-sky-blue {
-            color: var(--sky-blue);
-        }
-
-        .color-blue {
-            color: var(--blue);
-        }
-
-        .color-periwinkle {
-            color: var(--periwinkle);
-        }
-
-        .color-lavender {
-            color: var(--lavender);
-        }
-
-        .color-lilac {
-            color: var(--lilac);
-        }
-
-        .color-pink {
-            color: var(--pink);
-        }
-
-        .color-gray {
-            color: var(--gray);
         }
 
         @keyframes fadeIn {
@@ -501,16 +549,46 @@
         #output {
             animation: fadeIn 0.3s ease-out;
         }
+
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            background-color: hsl(var(--muted) / 0.5);
+            border-radius: var(--radius);
+            color: hsl(var(--muted-foreground));
+        }
+
+        .empty-icon {
+            margin-bottom: 16px;
+            color: hsl(var(--primary) / 0.7);
+        }
+
+        .empty-state p {
+            font-size: 14px;
+            line-height: 1.5;
+        }
     </style>
 </head>
 
 <body ng-class="{'dark': isDarkMode}">
     <div id="body" ng-controller="MainCtrl">
         <div class="header">
-            <h1>Learning Task Calculator</h1>
+            <h1>
+                Learning Task Calculator
+            </h1>
             <div class="header-actions">
                 <!-- Legend toggle button -->
-                <button class="icon-button" ng-click="toggleLegend()" aria-label="Toggle legend">
+                <button class="icon-button" ng-click="toggleLegend()" aria-label="Toggle legend"
+                    title="Show grade descriptors">
                     <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="8" y1="6" x2="21" y2="6"></line>
@@ -523,7 +601,7 @@
                 </button>
 
                 <!-- Theme toggle button -->
-                <button class="icon-button" ng-click="toggleTheme()" aria-label="Toggle theme">
+                <button class="icon-button" ng-click="toggleTheme()" aria-label="Toggle theme" title="Toggle dark mode">
                     <!-- Sun icon for dark mode -->
                     <svg ng-if="isDarkMode" class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
                         fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -550,9 +628,11 @@
 
         <!-- Legend section -->
         <div class="legend" ng-class="{'visible': showLegend}">
-            <div class="legend-title">Grade Descriptors</div>
             <div class="legend-item" ng-repeat="grade in grades">
-                <span class="legend-grade" ng-class="getColorClass($index)">{{grade.grade}}</span>
+                <span class="legend-grade">
+                    <span class="legend-color" ng-style="{'background-color': grade.color}"></span>
+                    {{grade.grade}}
+                </span>
                 <span class="legend-range">{{grade.min}}-{{grade.max}}%</span>
             </div>
         </div>
@@ -561,66 +641,55 @@
             <div class="form-group">
                 <div class="form-label">Score</div>
                 <div class="form-input">
-                    <input type="number" ng-model="score" placeholder="0" ng-change="recalc()" min="0"
-                        max="{{total}}" />
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="form-label">Out of</div>
-                <div class="form-input">
-                    <input type="number" ng-model="total" placeholder="100" ng-change="recalc()" min="1" />
+                    <input type="number" ng-model="score" placeholder="0" ng-change="recalc()" min="0" max="{{total}}"
+                        step="0.01" inputmode="decimal">
                 </div>
             </div>
 
-            <!-- Slider for score input -->
+            <div class="form-group">
+                <div class="form-label">Total</div>
+                <div class="form-input">
+                    <input type="number" ng-model="total" placeholder="100" ng-change="recalc()" min="1" step="0.01"
+                        inputmode="decimal">
+                </div>
+            </div>
+
             <div class="slider-container">
-                <input type="range" min="0" max="{{total}}" ng-model="score" class="slider" ng-change="sliderChanged()"
-                    ng-mouseup="sliderReleased()" ng-touchend="sliderReleased()">
+                <input type="range" class="slider" min="0" max="{{total}}" ng-model="score" slider-input step="1">
                 <div class="slider-value">{{score || 0}} / {{total || 100}}</div>
             </div>
         </div>
 
-        <div id="output" ng-class="{'hidden': !showResults}">
+        <div id="output" ng-class="{'hidden': !score || !total}">
             <div class="result-item">
-                <div class="result-label">Descriptor</div>
+                <div class="result-label">Percentage</div>
                 <div class="result-value-container">
-                    <div class="result-value" ng-class="{'animate': result.animateChange}"
-                        ng-style="{'color': result.color}">
-                        {{ result.grade || '-' }}
-                    </div>
+                    <div class="result-value" ng-class="{'animate': animatePercentage}">{{percentage | number:2}}%</div>
                     <div class="copy-container">
-                        <button class="icon-button copy-button" ng-click="copyToClipboard()"
-                            ng-class="{'copied': showCopyFeedback}" aria-label="Copy descriptor to clipboard"
-                            ng-if="result.grade">
-                            <!-- Copy icon -->
-                            <svg ng-if="!showCopyFeedback" class="icon" xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
+                        <button class="icon-button copy-button" ng-class="{'copied': showCopyFeedback}"
+                            ng-click="copyToClipboard(percentage, 'percentage')">
+                            <svg class="icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
                                 <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
                             </svg>
-                            <!-- Check icon for feedback -->
-                            <svg ng-if="showCopyFeedback" class="icon" xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                stroke-linecap="round" stroke-linejoin="round">
-                                <polyline points="20 6 9 17 4 12"></polyline>
-                            </svg>
                         </button>
                         <!-- Copied text notification -->
-                        <div class="copied-notification" ng-class="{'visible': showCopyFeedback}">
+                        <div class="copied-notification" ng-class="{'show': showCopyFeedback}">
                             Copied!
                         </div>
                     </div>
                 </div>
             </div>
+
             <div class="result-item">
-                <div class="result-label">Percentage</div>
-                <div class="result-value" ng-class="{'animate': result.animateChange}"
-                    ng-style="{'color': result.color}">
-                    {{ result.percentage || '-' }}%
+                <div class="result-label">Grade</div>
+                <div class="result-value" ng-style="getColorClass(gradeIndex)" ng-class="{'animate': animateGrade}">
+                    {{grade}}
                 </div>
             </div>
         </div>
+
     </div>
 </body>
 
