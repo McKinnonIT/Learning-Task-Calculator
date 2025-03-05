@@ -15,11 +15,21 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
         restrict: 'A',
         require: 'ngModel',
         link: function (scope, element, attr, ngModel) {
+            // Parse view value to model value
+            ngModel.$parsers.push(function (value) {
+                return parseFloat(value) || 0;
+            });
+
+            // Format model value to view value
+            ngModel.$formatters.push(function (value) {
+                return parseFloat(value) || 0;
+            });
+
             // Listen for input event (fires continuously while sliding)
             element.on('input', function () {
                 scope.$apply(function () {
                     // Round to integer for slider
-                    const intValue = Math.round(parseFloat(element.val()));
+                    const intValue = Math.round(parseFloat(element.val()) || 0);
                     ngModel.$setViewValue(intValue);
 
                     // Update the score in real-time
@@ -97,11 +107,11 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
             try {
                 const savedData = JSON.parse(localStorage.getItem('calculatorData'));
                 if (savedData) {
-                    $scope.score = savedData.score || '';
-                    $scope.total = savedData.total || DEFAULT_TOTAL;
+                    $scope.score = savedData.score !== undefined && savedData.score !== null ? parseFloat(savedData.score) : '';
+                    $scope.total = savedData.total !== undefined && savedData.total !== null ? parseFloat(savedData.total) : DEFAULT_TOTAL;
 
                     // Recalculate with loaded data
-                    if ($scope.score && $scope.total) {
+                    if ($scope.score !== '' && $scope.total) {
                         recalculate();
                     }
                 }
@@ -129,6 +139,11 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
                 console.error('Error saving data:', e);
             }
         }
+
+        // Recalculate function - exposed to the scope
+        $scope.recalculate = function () {
+            recalculate();
+        };
 
         // Recalculate function
         function recalculate() {
@@ -207,6 +222,13 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
             if (value === undefined || value === null || value === '') {
                 return false;
             }
+
+            // Handle string values by parsing them
+            if (typeof value === 'string') {
+                value = value.trim();
+                if (value === '') return false;
+            }
+
             const num = parseFloat(value);
             return !isNaN(num) && isFinite(num) && num >= 0;
         }
