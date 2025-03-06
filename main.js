@@ -62,7 +62,8 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
         // Animation states
         $scope.animatePercentage = false;
         $scope.animateGrade = false;
-        $scope.showCopyFeedback = false;
+        $scope.showCopyFeedbackPercentage = false;
+        $scope.showCopyFeedbackGrade = false;
 
         // Apply theme on load
         applyTheme($scope.isDarkMode);
@@ -247,15 +248,22 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
             if (type === 'percentage') {
                 textToCopy = value.toFixed(2) + '%';
             } else if (type === 'grade') {
-                textToCopy = $scope.grade;
+                textToCopy = value;
             }
 
             navigator.clipboard.writeText(textToCopy).then(function () {
                 $scope.$apply(function () {
-                    $scope.showCopyFeedback = true;
-                    $timeout(function () {
-                        $scope.showCopyFeedback = false;
-                    }, 2000);
+                    if (type === 'percentage') {
+                        $scope.showCopyFeedbackPercentage = true;
+                        $timeout(function () {
+                            $scope.showCopyFeedbackPercentage = false;
+                        }, 2000);
+                    } else if (type === 'grade') {
+                        $scope.showCopyFeedbackGrade = true;
+                        $timeout(function () {
+                            $scope.showCopyFeedbackGrade = false;
+                        }, 2000);
+                    }
                 });
             }).catch(function (err) {
                 console.error('Could not copy text: ', err);
