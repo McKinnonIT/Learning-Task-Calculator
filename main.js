@@ -1,14 +1,4 @@
-const GRADES = [
-    { min: 90, max: 100, grade: "Outstanding", color: "var(--mint)" },
-    { min: 80, max: 89, grade: "Excellent", color: "var(--teal)" },
-    { min: 70, max: 79, grade: "Very Good", color: "var(--sky-blue)" },
-    { min: 60, max: 69, grade: "Good", color: "var(--blue)" },
-    { min: 50, max: 59, grade: "Moderate", color: "var(--periwinkle)" },
-    { min: 40, max: 49, grade: "Limited", color: "var(--lavender)" },
-    { min: 20, max: 39, grade: "Low", color: "var(--lilac)" },
-    { min: 1, max: 19, grade: "Very Low", color: "var(--pink)" },
-    { min: 0, max: 0, grade: "Ungraded", color: "var(--gray)" }
-];
+const GRADES = GradeUtils.GRADES;
 
 angular.module('gradeApp', []).directive('sliderInput', function () {
     return {
@@ -163,22 +153,10 @@ angular.module('gradeApp', []).directive('sliderInput', function () {
             const oldPercentage = $scope.percentage;
             $scope.percentage = (score / total) * 100;
 
-            // Find grade descriptor
-            let foundGrade = null;
-            let foundIndex = -1;
-
-            for (let i = 0; i < GRADES.length; i++) {
-                const grade = GRADES[i];
-                if ($scope.percentage >= grade.min && $scope.percentage <= grade.max) {
-                    foundGrade = grade.grade;
-                    foundIndex = i;
-                    break;
-                }
-            }
-
             const oldGrade = $scope.grade;
-            $scope.grade = foundGrade;
-            $scope.gradeIndex = foundIndex;
+            const matchedGrade = GradeUtils.getGradeForPercentage($scope.percentage);
+            $scope.grade = matchedGrade.grade;
+            $scope.gradeIndex = matchedGrade.gradeIndex;
 
             // Animate changes if values have changed
             if (oldPercentage !== $scope.percentage) {
